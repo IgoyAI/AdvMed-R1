@@ -52,7 +52,11 @@ bash setup.sh
 > **PyTorch 2.6.0 or higher is required** for compatibility with flash-attn 2.7.0+. If you encounter `AttributeError: module 'torch.library' has no attribute 'wrap_triton'`, please upgrade PyTorch: `pip install torch>=2.6.0`
 
 > [!TIP]
-> **Flash Attention Compatibility Issues**: If you encounter errors like `undefined symbol: _ZN3c105ErrorC2ENS_14SourceLocationESs` when loading models with flash-attention, this indicates an ABI incompatibility between your PyTorch version and the installed flash-attention library. The evaluation scripts now automatically fall back to SDPA attention when flash-attention fails. Alternatively, you can:
+> **Flash Attention Compatibility Issues**: If you encounter errors like `undefined symbol: _ZN3c105ErrorC2ENS_14SourceLocationESs` when loading models with flash-attention, this indicates an ABI incompatibility between your PyTorch version and the installed flash-attention library. 
+> 
+> **The evaluation scripts automatically handle this error** by catching the import failure and falling back to SDPA attention. No manual intervention is required - the scripts will display a warning and continue running with SDPA.
+> 
+> If you want to fix flash-attention permanently, you can:
 > 1. Reinstall flash-attention: `pip uninstall flash-attn && pip install flash-attn --no-build-isolation`
 > 2. Or explicitly specify attention implementation: `--attn_implementation sdpa` or `--attn_implementation eager`
 
