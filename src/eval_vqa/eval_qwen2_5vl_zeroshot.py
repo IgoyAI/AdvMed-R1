@@ -13,7 +13,23 @@ from typing import List, Dict, Optional, Tuple
 import torch
 from PIL import Image
 from tqdm import tqdm
-from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
+
+# Handle flash attention import errors at module import time
+try:
+    from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
+except (ImportError, RuntimeError) as e:
+    # If flash attention fails at import time, set environment variable and retry
+    error_msg = str(e)
+    if 'flash_attn' in error_msg.lower() or 'undefined symbol' in error_msg.lower():
+        warnings.warn(
+            f"Failed to import transformers due to flash attention error: {error_msg}\n"
+            "Setting TRANSFORMERS_ATTN_IMPLEMENTATION=sdpa to bypass flash attention at import time."
+        )
+        os.environ['TRANSFORMERS_ATTN_IMPLEMENTATION'] = 'sdpa'
+        from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
+    else:
+        raise
+
 from qwen_vl_utils import process_vision_info
 
 
