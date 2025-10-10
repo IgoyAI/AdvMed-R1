@@ -60,7 +60,7 @@ _deps = [
     "pytest",
     "safetensors>=0.3.3",
     "sentencepiece>=0.1.99",
-    "torch>=2.5.1",
+    "torch>=2.6.0",
     "transformers @ git+https://github.com/huggingface/transformers.git@336dc69d63d56f232a183a3e7f52790429b871ef",
     "trl==0.14.0",
     "vllm==0.6.6.post1",
