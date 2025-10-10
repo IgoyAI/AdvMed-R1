@@ -190,6 +190,59 @@ for i in tqdm(range(0, len(messages), BSZ)):
 
 ---
 
+## 🛡️ Zero-Shot Evaluation with Adversarial Attacks
+
+We provide comprehensive evaluation scripts for zero-shot assessment of Qwen 2.5 VL 3B on the OmniMedVQA dataset, including support for adversarial attacks (FGSM and PGD).
+
+### Quick Start
+
+```bash
+cd src/eval_vqa
+
+# Clean zero-shot evaluation
+python eval_qwen2_5vl_zeroshot.py \
+    --model_path /path/to/Qwen2.5-VL-3B-Instruct \
+    --test_data ../../Splits/modality/test/CT\(Computed\ Tomography\)_test.json \
+    --dataset_root ../.. \
+    --output_path ../../results/ct_clean.json \
+    --batch_size 8
+
+# FGSM adversarial evaluation
+python eval_qwen2_5vl_adversarial.py \
+    --model_path /path/to/Qwen2.5-VL-3B-Instruct \
+    --test_data ../../Splits/modality/test/CT\(Computed\ Tomography\)_test.json \
+    --dataset_root ../.. \
+    --output_path ../../results/ct_fgsm.json \
+    --batch_size 4 \
+    --attack_type fgsm \
+    --epsilon 0.03
+
+# Batch evaluation across all modalities
+python batch_eval_adversarial.py \
+    --model_path /path/to/Qwen2.5-VL-3B-Instruct \
+    --splits_dir ../../Splits \
+    --dataset_root ../.. \
+    --output_dir ../../results/adversarial_eval \
+    --batch_size 8 \
+    --evaluation_type modality
+```
+
+### Supported Features
+
+- ✅ **Clean Zero-Shot Evaluation**: Baseline performance without perturbations
+- ✅ **FGSM Attack**: Fast Gradient Sign Method for single-step adversarial perturbations
+- ✅ **PGD Attack**: Projected Gradient Descent for iterative adversarial perturbations
+- ✅ **Batch Processing**: Evaluate across all modalities automatically
+- ✅ **Comprehensive Metrics**: Accuracy, per-sample predictions, and attack comparisons
+
+### Documentation
+
+- 📖 **[Quick Start Guide](src/eval_vqa/QUICKSTART.md)** - Get started in 5 minutes
+- 📚 **[Detailed Documentation](src/eval_vqa/README_ADVERSARIAL.md)** - Complete reference guide
+- 💡 **[Usage Examples](src/eval_vqa/example_usage.py)** - Run for interactive examples
+
+---
+
 ## Think or Nothink
 
 Evaluation across modalities and tasks:
