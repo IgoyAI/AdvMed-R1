@@ -2,6 +2,9 @@
 cd src/r1-v 
 pip install -e ".[dev]"
 
+# Upgrade PyTorch to 2.6.0+ (required for flash-attn 2.7.0+)
+pip install "torch>=2.6.0" --upgrade
+
 # Addtional modules
 pip install wandb==0.18.3
 pip install tensorboardx
