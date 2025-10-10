@@ -12,6 +12,22 @@ This guide will help you quickly set up and run zero-shot evaluation with advers
 
 ### 1. Download the Model
 
+#### Option A: Automatic Download (Recommended)
+
+Use our utility script to automatically download the model:
+
+```bash
+# Download Qwen2.5-VL-3B-Instruct
+python src/utils/download_model.py --model qwen2.5-vl-3b --output ./models/Qwen2.5-VL-3B-Instruct
+
+# Or download Med-R1 checkpoint
+python src/utils/download_model.py --model med-r1 --output ./checkpoints/Med-R1
+```
+
+#### Option B: Manual Download
+
+Using Hugging Face CLI:
+
 ```bash
 # Using Hugging Face CLI
 huggingface-cli download Qwen/Qwen2.5-VL-3B-Instruct --local-dir ./models/Qwen2.5-VL-3B-Instruct
