@@ -20,12 +20,12 @@ def example_clean_evaluation():
     """Example: Clean zero-shot evaluation"""
     print_section("Example 1: Clean Zero-Shot Evaluation")
     
-    cmd = """
-python eval_qwen2_5vl_zeroshot.py \\
-    --model_path /path/to/Qwen2.5-VL-3B-Instruct \\
-    --test_data ../../Splits/modality/test/CT\(Computed\ Tomography\)_test.json \\
-    --dataset_root ../.. \\
-    --output_path ../../results/ct_clean.json \\
+    cmd = r"""
+python eval_qwen2_5vl_zeroshot.py \
+    --model_path /path/to/Qwen2.5-VL-3B-Instruct \
+    --test_data ../../Splits/modality/test/CT\(Computed\ Tomography\)_test.json \
+    --dataset_root ../.. \
+    --output_path ../../results/ct_clean.json \
     --batch_size 8
 """
     print("This evaluates the model on CT images without any adversarial attacks.")
@@ -37,14 +37,14 @@ def example_fgsm_evaluation():
     """Example: FGSM adversarial evaluation"""
     print_section("Example 2: FGSM Adversarial Evaluation")
     
-    cmd = """
-python eval_qwen2_5vl_adversarial.py \\
-    --model_path /path/to/Qwen2.5-VL-3B-Instruct \\
-    --test_data ../../Splits/modality/test/X-Ray_test.json \\
-    --dataset_root ../.. \\
-    --output_path ../../results/xray_fgsm.json \\
-    --batch_size 4 \\
-    --attack_type fgsm \\
+    cmd = r"""
+python eval_qwen2_5vl_adversarial.py \
+    --model_path /path/to/Qwen2.5-VL-3B-Instruct \
+    --test_data ../../Splits/modality/test/X-Ray_test.json \
+    --dataset_root ../.. \
+    --output_path ../../results/xray_fgsm.json \
+    --batch_size 4 \
+    --attack_type fgsm \
     --epsilon 0.03
 """
     print("This evaluates robustness against FGSM attacks on X-Ray images.")
@@ -57,16 +57,16 @@ def example_pgd_evaluation():
     """Example: PGD adversarial evaluation"""
     print_section("Example 3: PGD Adversarial Evaluation")
     
-    cmd = """
-python eval_qwen2_5vl_adversarial.py \\
-    --model_path /path/to/Qwen2.5-VL-3B-Instruct \\
-    --test_data ../../Splits/modality/test/MR\ \(Mag-netic\ Resonance\ Imaging\)_test.json \\
-    --dataset_root ../.. \\
-    --output_path ../../results/mri_pgd.json \\
-    --batch_size 4 \\
-    --attack_type pgd \\
-    --epsilon 0.03 \\
-    --pgd_alpha 0.01 \\
+    cmd = r"""
+python eval_qwen2_5vl_adversarial.py \
+    --model_path /path/to/Qwen2.5-VL-3B-Instruct \
+    --test_data ../../Splits/modality/test/MR\ \(Mag-netic\ Resonance\ Imaging\)_test.json \
+    --dataset_root ../.. \
+    --output_path ../../results/mri_pgd.json \
+    --batch_size 4 \
+    --attack_type pgd \
+    --epsilon 0.03 \
+    --pgd_alpha 0.01 \
     --pgd_iters 10
 """
     print("This evaluates robustness against PGD attacks on MRI images.")
@@ -79,15 +79,15 @@ def example_batch_evaluation():
     """Example: Batch evaluation across all modalities"""
     print_section("Example 4: Batch Evaluation (All Modalities)")
     
-    cmd = """
-python batch_eval_adversarial.py \\
-    --model_path /path/to/Qwen2.5-VL-3B-Instruct \\
-    --splits_dir ../../Splits \\
-    --dataset_root ../.. \\
-    --output_dir ../../results/adversarial_eval \\
-    --batch_size 8 \\
-    --attacks clean fgsm pgd \\
-    --epsilon 0.03 \\
+    cmd = r"""
+python batch_eval_adversarial.py \
+    --model_path /path/to/Qwen2.5-VL-3B-Instruct \
+    --splits_dir ../../Splits \
+    --dataset_root ../.. \
+    --output_dir ../../results/adversarial_eval \
+    --batch_size 8 \
+    --attacks clean fgsm pgd \
+    --epsilon 0.03 \
     --evaluation_type modality
 """
     print("This runs comprehensive evaluation across all modalities and attack types.")
@@ -100,14 +100,14 @@ def example_specific_modalities():
     """Example: Evaluate specific modalities only"""
     print_section("Example 5: Evaluate Specific Modalities")
     
-    cmd = """
-python batch_eval_adversarial.py \\
-    --model_path /path/to/Qwen2.5-VL-3B-Instruct \\
-    --splits_dir ../../Splits \\
-    --dataset_root ../.. \\
-    --output_dir ../../results/adversarial_eval \\
-    --batch_size 8 \\
-    --modalities "CT(Computed Tomography)" "X-Ray" \\
+    cmd = r"""
+python batch_eval_adversarial.py \
+    --model_path /path/to/Qwen2.5-VL-3B-Instruct \
+    --splits_dir ../../Splits \
+    --dataset_root ../.. \
+    --output_dir ../../results/adversarial_eval \
+    --batch_size 8 \
+    --modalities "CT(Computed Tomography)" "X-Ray" \
     --attacks clean fgsm
 """
     print("This evaluates only specific modalities (CT and X-Ray) with selected attacks.")
@@ -149,14 +149,14 @@ def example_comparing_epsilons():
     print("Evaluate with different epsilon values to see robustness degradation:")
     
     for eps in [0.01, 0.03, 0.05]:
-        cmd = f"""
-python eval_qwen2_5vl_adversarial.py \\
-    --model_path /path/to/Qwen2.5-VL-3B-Instruct \\
-    --test_data ../../Splits/modality/test/CT\(Computed\ Tomography\)_test.json \\
-    --dataset_root ../.. \\
-    --output_path ../../results/ct_fgsm_eps{eps}.json \\
-    --batch_size 4 \\
-    --attack_type fgsm \\
+        cmd = rf"""
+python eval_qwen2_5vl_adversarial.py \
+    --model_path /path/to/Qwen2.5-VL-3B-Instruct \
+    --test_data ../../Splits/modality/test/CT\(Computed\ Tomography\)_test.json \
+    --dataset_root ../.. \
+    --output_path ../../results/ct_fgsm_eps{eps}.json \
+    --batch_size 4 \
+    --attack_type fgsm \
     --epsilon {eps}
 """
         print(f"\nEpsilon = {eps}:")
@@ -167,7 +167,7 @@ def example_workflow():
     """Example: Complete workflow"""
     print_section("Example 8: Complete Evaluation Workflow")
     
-    print("""
+    print(r"""
 A complete workflow for evaluating your model:
 
 Step 1: Download the model
@@ -189,32 +189,32 @@ cd src/eval_vqa
 
 Step 4: Run clean evaluation
 --------------------------
-python eval_qwen2_5vl_zeroshot.py \\
-    --model_path ../../models/Qwen2.5-VL-3B \\
-    --test_data ../../Splits/modality/test/CT\(Computed\ Tomography\)_test.json \\
-    --dataset_root ../.. \\
-    --output_path ../../results/ct_clean.json \\
+python eval_qwen2_5vl_zeroshot.py \
+    --model_path ../../models/Qwen2.5-VL-3B \
+    --test_data ../../Splits/modality/test/CT\(Computed\ Tomography\)_test.json \
+    --dataset_root ../.. \
+    --output_path ../../results/ct_clean.json \
     --batch_size 8
 
 Step 5: Run adversarial evaluations
 --------------------------------
-python eval_qwen2_5vl_adversarial.py \\
-    --model_path ../../models/Qwen2.5-VL-3B \\
-    --test_data ../../Splits/modality/test/CT\(Computed\ Tomography\)_test.json \\
-    --dataset_root ../.. \\
-    --output_path ../../results/ct_fgsm.json \\
-    --batch_size 4 \\
-    --attack_type fgsm \\
+python eval_qwen2_5vl_adversarial.py \
+    --model_path ../../models/Qwen2.5-VL-3B \
+    --test_data ../../Splits/modality/test/CT\(Computed\ Tomography\)_test.json \
+    --dataset_root ../.. \
+    --output_path ../../results/ct_fgsm.json \
+    --batch_size 4 \
+    --attack_type fgsm \
     --epsilon 0.03
 
 Step 6: Run batch evaluation (all modalities)
 ------------------------------------------
-python batch_eval_adversarial.py \\
-    --model_path ../../models/Qwen2.5-VL-3B \\
-    --splits_dir ../../Splits \\
-    --dataset_root ../.. \\
-    --output_dir ../../results/adversarial_eval \\
-    --batch_size 8 \\
+python batch_eval_adversarial.py \
+    --model_path ../../models/Qwen2.5-VL-3B \
+    --splits_dir ../../Splits \
+    --dataset_root ../.. \
+    --output_dir ../../results/adversarial_eval \
+    --batch_size 8 \
     --evaluation_type modality
 
 Step 7: Analyze results
