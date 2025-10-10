@@ -3,6 +3,26 @@
 # Adversarial Evaluation Script for Qwen 2.5 VL 3B
 # This script runs zero-shot evaluation with FGSM and PGD attacks
 
+# Check PyTorch version (requires 2.6.0+ for flash-attn 2.7.0+)
+echo "Checking PyTorch version..."
+TORCH_VERSION=$(python -c "import torch; print(torch.__version__)" 2>/dev/null)
+if [ $? -ne 0 ]; then
+    echo "Error: PyTorch is not installed"
+    echo "Please run: bash setup.sh"
+    exit 1
+fi
+
+TORCH_MAJOR=$(echo $TORCH_VERSION | cut -d. -f1)
+TORCH_MINOR=$(echo $TORCH_VERSION | cut -d. -f2)
+
+if [ "$TORCH_MAJOR" -lt 2 ] || ([ "$TORCH_MAJOR" -eq 2 ] && [ "$TORCH_MINOR" -lt 6 ]); then
+    echo "Error: PyTorch $TORCH_VERSION is installed, but version 2.6.0 or higher is required"
+    echo "Please upgrade PyTorch: pip install 'torch>=2.6.0' --upgrade"
+    exit 1
+fi
+echo "✓ PyTorch $TORCH_VERSION detected"
+echo ""
+
 # Default configuration
 MODEL_PATH=${MODEL_PATH:-"/path/to/Qwen2.5-VL-3B-Instruct"}
 DATASET_ROOT=${DATASET_ROOT:-"../.."}
