@@ -48,6 +48,9 @@ bash setup.sh
 > [!NOTE] 
 > If you encounter issues during setup, please ensure your environment aligns with `./src/requirements.txt`.
 
+> [!IMPORTANT]
+> **PyTorch 2.6.0 or higher is required** for compatibility with flash-attn 2.7.0+. If you encounter `AttributeError: module 'torch.library' has no attribute 'wrap_triton'`, please upgrade PyTorch: `pip install torch>=2.6.0`
+
 ---
 
 ## 📥 Download Model Checkpoints
