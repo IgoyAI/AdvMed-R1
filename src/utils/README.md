@@ -26,6 +26,9 @@ This is already included in the project's `requirements.txt`.
 
 ```bash
 python src/utils/download_model.py --list
+
+# Or use the convenience wrapper from project root
+./download_model.sh --list
 ```
 
 ### Download Pre-configured Models
@@ -33,6 +36,9 @@ python src/utils/download_model.py --list
 ```bash
 # Download Qwen2.5-VL-3B-Instruct
 python src/utils/download_model.py --model qwen2.5-vl-3b --output ./models/Qwen2.5-VL-3B-Instruct
+
+# Or use the wrapper
+./download_model.sh --model qwen2.5-vl-3b --output ./models/Qwen2.5-VL-3B-Instruct
 
 # Download Med-R1 checkpoint
 python src/utils/download_model.py --model med-r1 --output ./checkpoints/Med-R1

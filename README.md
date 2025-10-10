@@ -60,6 +60,9 @@ We provide an automatic download utility to easily fetch model checkpoints from 
 # Download Qwen2.5-VL-3B-Instruct (base model)
 python src/utils/download_model.py --model qwen2.5-vl-3b --output ./models/Qwen2.5-VL-3B-Instruct
 
+# Or use the convenience wrapper from the project root
+./download_model.sh --model qwen2.5-vl-3b --output ./models/Qwen2.5-VL-3B-Instruct
+
 # Download Med-R1 checkpoint
 python src/utils/download_model.py --model med-r1 --output ./checkpoints/Med-R1
 
