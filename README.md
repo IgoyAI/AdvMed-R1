@@ -50,6 +50,49 @@ bash setup.sh
 
 ---
 
+## 📥 Download Model Checkpoints
+
+We provide an automatic download utility to easily fetch model checkpoints from Hugging Face Hub:
+
+### Quick Download
+
+```bash
+# Download Qwen2.5-VL-3B-Instruct (base model)
+python src/utils/download_model.py --model qwen2.5-vl-3b --output ./models/Qwen2.5-VL-3B-Instruct
+
+# Or use the convenience wrapper from the project root
+./download_model.sh --model qwen2.5-vl-3b --output ./models/Qwen2.5-VL-3B-Instruct
+
+# Download Med-R1 checkpoint
+python src/utils/download_model.py --model med-r1 --output ./checkpoints/Med-R1
+
+# List all available pre-configured models
+python src/utils/download_model.py --list
+```
+
+### Advanced Options
+
+```bash
+# Download any model from Hugging Face Hub
+python src/utils/download_model.py --model Qwen/Qwen2-VL-7B-Instruct --output ./models/Qwen2-VL-7B
+
+# With authentication token (for private models)
+python src/utils/download_model.py --model YOUR_MODEL --output ./models --token YOUR_HF_TOKEN
+
+# Adjust download speed with more workers
+python src/utils/download_model.py --model qwen2.5-vl-3b --output ./models --max-workers 8
+```
+
+### Manual Download (Alternative)
+
+You can also download models manually using the Hugging Face CLI:
+
+```bash
+huggingface-cli download Qwen/Qwen2.5-VL-3B-Instruct --local-dir ./models/Qwen2.5-VL-3B-Instruct
+```
+
+---
+
 ## ✅ Supported Models
 
 - `Qwen2-VL`
