@@ -40,6 +40,48 @@ The OmniMedVQA dataset should be organized as follows:
 
 ## Usage
 
+### Shell Script (Recommended)
+
+The easiest way to run adversarial evaluation locally:
+
+```bash
+cd src/eval_vqa
+
+# Set environment variables
+export MODEL_PATH="/path/to/Qwen2.5-VL-3B-Instruct"
+
+# Run batch evaluation on all modalities
+./run_adversarial_eval.sh batch
+
+# Or evaluate specific modality
+./run_adversarial_eval.sh ct      # CT only
+./run_adversarial_eval.sh xray    # X-Ray only
+./run_adversarial_eval.sh mri     # MRI only
+```
+
+### SLURM Job Submission
+
+For cluster environments with SLURM, use the batch submission script:
+
+```bash
+cd src/eval_vqa
+
+# Configure environment variables (optional - defaults are provided)
+export MODEL_PATH="/path/to/model"
+export SPLITS_DIR="/path/to/Splits"
+export OUTPUT_DIR="/path/to/output"
+
+# Submit jobs for all modalities
+./submit_adversarial_eval.sh batch
+
+# Or submit for specific modality
+./submit_adversarial_eval.sh ct      # CT only
+./submit_adversarial_eval.sh xray    # X-Ray only
+./submit_adversarial_eval.sh mri     # MRI only
+```
+
+This will submit separate SLURM jobs for each attack type (clean, fgsm, pgd) on the selected modalities.
+
 ### Single Evaluation
 
 Run evaluation on a single test file:

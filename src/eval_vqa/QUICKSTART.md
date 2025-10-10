@@ -70,6 +70,29 @@ export MODEL_PATH="/path/to/Qwen2.5-VL-3B-Instruct"
 ./run_adversarial_eval.sh mri     # MRI only
 ```
 
+### Option 1.5: Using SLURM (For Cluster Environments)
+
+If you're running on a cluster with SLURM:
+
+```bash
+cd src/eval_vqa
+
+# Configure environment variables (optional)
+export MODEL_PATH="/path/to/model"
+export SPLITS_DIR="/path/to/Splits"
+export OUTPUT_DIR="/path/to/output"
+
+# Submit batch jobs for all modalities
+./submit_adversarial_eval.sh batch
+
+# Or submit for specific modality
+./submit_adversarial_eval.sh ct      # CT only
+./submit_adversarial_eval.sh xray    # X-Ray only
+./submit_adversarial_eval.sh mri     # MRI only
+```
+
+This submits separate SLURM jobs for each attack type (clean, fgsm, pgd), allowing parallel execution across the cluster.
+
 ### Option 2: Using Python Scripts Directly
 
 #### Clean Zero-Shot Evaluation (No Attack)
