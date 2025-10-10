@@ -41,7 +41,8 @@ def get_test_files(splits_dir: str, evaluation_type: str = "modality") -> List[D
 
 def run_single_evaluation(model_path: str, test_data_path: str, dataset_root: str,
                          output_path: str, batch_size: int, attack_type: str,
-                         epsilon: float, pgd_alpha: float, pgd_iters: int) -> float:
+                         epsilon: float, pgd_alpha: float, pgd_iters: int,
+                         attn_implementation: str = "auto") -> float:
     """
     Run a single evaluation
     
@@ -55,6 +56,7 @@ def run_single_evaluation(model_path: str, test_data_path: str, dataset_root: st
         epsilon: Epsilon for attacks
         pgd_alpha: Alpha for PGD
         pgd_iters: Iterations for PGD
+        attn_implementation: Attention implementation to use
         
     Returns:
         Accuracy
@@ -71,7 +73,8 @@ def run_single_evaluation(model_path: str, test_data_path: str, dataset_root: st
         "--attack_type", attack_type,
         "--epsilon", str(epsilon),
         "--pgd_alpha", str(pgd_alpha),
-        "--pgd_iters", str(pgd_iters)
+        "--pgd_iters", str(pgd_iters),
+        "--attn_implementation", attn_implementation
     ]
     
     # Run evaluation
@@ -167,6 +170,13 @@ def main():
         default=10,
         help="Number of iterations for PGD attack"
     )
+    parser.add_argument(
+        "--attn_implementation",
+        type=str,
+        default="auto",
+        choices=["auto", "flash_attention_2", "sdpa", "eager"],
+        help="Attention implementation to use. 'auto' tries flash_attention_2 first, falls back to sdpa if unavailable"
+    )
     
     # Filtering arguments
     parser.add_argument(
@@ -229,7 +239,8 @@ def main():
                 attack_type=attack_type,
                 epsilon=args.epsilon,
                 pgd_alpha=args.pgd_alpha,
-                pgd_iters=args.pgd_iters
+                pgd_iters=args.pgd_iters,
+                attn_implementation=args.attn_implementation
             )
             
             test_results['attacks'][attack_type] = {

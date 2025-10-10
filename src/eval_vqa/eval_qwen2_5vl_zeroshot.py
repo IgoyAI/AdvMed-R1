@@ -7,6 +7,7 @@ import argparse
 import json
 import os
 import re
+import warnings
 from typing import List, Dict, Optional, Tuple
 
 import torch
@@ -19,24 +20,58 @@ from qwen_vl_utils import process_vision_info
 class Qwen25VLZeroShotEvaluator:
     """Simple evaluator for Qwen 2.5 VL model - clean zero-shot evaluation"""
     
-    def __init__(self, model_path: str, device: str = 'cuda'):
+    def __init__(self, model_path: str, device: str = 'cuda', attn_implementation: str = 'auto'):
         """
         Initialize the evaluator
         
         Args:
             model_path: Path to the Qwen 2.5 VL model
             device: Device to run the model on
+            attn_implementation: Attention implementation to use ('auto', 'flash_attention_2', 'sdpa', 'eager')
         """
         self.device = device
         
-        # Load model
-        print(f"Loading model from {model_path}...")
-        self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-            model_path,
-            torch_dtype=torch.bfloat16,
-            attn_implementation="flash_attention_2",
-            device_map="auto",
-        )
+        # Determine attention implementation
+        if attn_implementation == 'auto':
+            # Try flash_attention_2 first, fall back to sdpa/eager if it fails
+            try:
+                print(f"Loading model from {model_path} with flash_attention_2...")
+                self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+                    model_path,
+                    torch_dtype=torch.bfloat16,
+                    attn_implementation="flash_attention_2",
+                    device_map="auto",
+                )
+                print("✓ Successfully loaded model with flash_attention_2")
+            except (ImportError, RuntimeError) as e:
+                error_msg = str(e)
+                if 'flash_attn' in error_msg.lower() or 'undefined symbol' in error_msg.lower():
+                    warnings.warn(
+                        f"Failed to load model with flash_attention_2 due to: {error_msg}\n"
+                        "Falling back to sdpa attention implementation. "
+                        "To fix this, try: pip uninstall flash-attn && pip install flash-attn --no-build-isolation"
+                    )
+                    print("Loading model with sdpa attention implementation...")
+                    self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+                        model_path,
+                        torch_dtype=torch.bfloat16,
+                        attn_implementation="sdpa",
+                        device_map="auto",
+                    )
+                    print("✓ Successfully loaded model with sdpa attention")
+                else:
+                    raise
+        else:
+            # Use specified attention implementation
+            print(f"Loading model from {model_path} with {attn_implementation}...")
+            self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+                model_path,
+                torch_dtype=torch.bfloat16,
+                attn_implementation=attn_implementation,
+                device_map="auto",
+            )
+            print(f"✓ Successfully loaded model with {attn_implementation}")
+        
         self.model.eval()
         
         # Load processor
@@ -241,11 +276,18 @@ def main():
         required=True,
         help="Path to save evaluation results"
     )
+    parser.add_argument(
+        "--attn_implementation",
+        type=str,
+        default="auto",
+        choices=["auto", "flash_attention_2", "sdpa", "eager"],
+        help="Attention implementation to use. 'auto' tries flash_attention_2 first, falls back to sdpa if unavailable"
+    )
     
     args = parser.parse_args()
     
     # Initialize evaluator
-    evaluator = Qwen25VLZeroShotEvaluator(args.model_path)
+    evaluator = Qwen25VLZeroShotEvaluator(args.model_path, attn_implementation=args.attn_implementation)
     
     # Run evaluation
     evaluator.run_evaluation(
