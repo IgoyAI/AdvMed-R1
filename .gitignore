@@ -1,2 +1,42 @@
 src/r1-v/debug_log_2b.txt
 src/r1-v/debug_log_2b.txt
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Results and outputs
+results/
+*.json
+!Splits/**/*.json
+!src/**/*.json
+
+# Model checkpoints
+checkpoints/
+*.pth
+*.bin
+*.safetensors
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
