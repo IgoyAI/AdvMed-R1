@@ -468,10 +468,86 @@ class Qwen25VLEvaluator:
         accuracy = (correct_count / len(outputs) * 100) if len(outputs) > 0 else 0.0
         return accuracy, detailed_results
     
+    def save_sample_perturbed_images(self, data: List[Dict], attack_type: str, 
+                                     epsilon: float, pgd_alpha: float, pgd_iters: int,
+                                     num_samples: int, output_path: str):
+        """
+        Save sample perturbed images alongside originals for visualization
+        
+        Args:
+            data: List of data samples
+            attack_type: Type of attack ('fgsm' or 'pgd')
+            epsilon: Perturbation magnitude
+            pgd_alpha: Step size for PGD
+            pgd_iters: Number of iterations for PGD
+            num_samples: Number of samples to save
+            output_path: Path where results are saved (used to determine image output directory)
+        """
+        import matplotlib
+        matplotlib.use('Agg')  # Use non-interactive backend
+        import matplotlib.pyplot as plt
+        
+        # Create output directory for images
+        output_dir = os.path.dirname(output_path)
+        images_dir = os.path.join(output_dir, "sample_images")
+        os.makedirs(images_dir, exist_ok=True)
+        
+        # Select random samples to visualize
+        num_samples = min(num_samples, len(data))
+        sample_indices = np.random.choice(len(data), num_samples, replace=False)
+        
+        for idx in sample_indices:
+            sample = data[idx]
+            image_path = sample['image']
+            text_input = self.question_template.format(Question=sample['problem'])
+            
+            try:
+                # Load original image
+                original_image = Image.open(image_path).convert('RGB')
+                
+                # Generate adversarial image
+                adversarial_image = self.generate_adversarial_image(
+                    image_path, text_input, attack_type, epsilon, pgd_alpha, pgd_iters
+                )
+                
+                # Create comparison figure
+                fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+                
+                # Original image
+                axes[0].imshow(original_image)
+                axes[0].set_title('Original Image', fontsize=14, fontweight='bold')
+                axes[0].axis('off')
+                
+                # Adversarial image
+                axes[1].imshow(adversarial_image)
+                attack_title = f'{attack_type.upper()} Attack (ε={epsilon}'
+                if attack_type == 'pgd':
+                    attack_title += f', α={pgd_alpha}, iters={pgd_iters}'
+                attack_title += ')'
+                axes[1].set_title(attack_title, fontsize=14, fontweight='bold')
+                axes[1].axis('off')
+                
+                plt.tight_layout()
+                
+                # Save figure
+                output_filename = f"sample_{idx}_{attack_type}_eps{epsilon}.png"
+                output_image_path = os.path.join(images_dir, output_filename)
+                plt.savefig(output_image_path, dpi=150, bbox_inches='tight')
+                plt.close(fig)
+                
+                print(f"  Saved sample {idx + 1}/{num_samples}: {output_filename}")
+                
+            except Exception as e:
+                print(f"  Warning: Failed to save sample {idx}: {e}")
+                continue
+        
+        print(f"Sample images saved to: {images_dir}")
+    
     def run_evaluation(self, test_data_path: str, dataset_root: str, 
                       output_path: str, batch_size: int = 8,
                       attack_type: Optional[str] = None, epsilon: float = 0.03,
-                      pgd_alpha: float = 0.01, pgd_iters: int = 10):
+                      pgd_alpha: float = 0.01, pgd_iters: int = 10,
+                      save_sample_images: int = 0):
         """
         Run complete evaluation pipeline
         
@@ -484,6 +560,7 @@ class Qwen25VLEvaluator:
             epsilon: Perturbation magnitude
             pgd_alpha: Step size for PGD
             pgd_iters: Number of iterations for PGD
+            save_sample_images: Number of sample perturbed images to save (0 = none)
         """
         # Load data
         print(f"Loading test data from {test_data_path}...")
@@ -499,6 +576,14 @@ class Qwen25VLEvaluator:
         outputs = self.evaluate_batch(
             messages, batch_size, attack_type, epsilon, pgd_alpha, pgd_iters
         )
+        
+        # Save sample perturbed images if requested
+        if save_sample_images > 0 and attack_type is not None:
+            print(f"\nSaving {save_sample_images} sample perturbed images...")
+            self.save_sample_perturbed_images(
+                data, attack_type, epsilon, pgd_alpha, pgd_iters, 
+                save_sample_images, output_path
+            )
         
         # Compute accuracy
         ground_truths = [item['solution'] for item in data]
@@ -605,6 +690,12 @@ def main():
         choices=["auto", "flash_attention_2", "sdpa", "eager"],
         help="Attention implementation to use. 'auto' tries flash_attention_2 first, falls back to sdpa if unavailable"
     )
+    parser.add_argument(
+        "--save_sample_images",
+        type=int,
+        default=0,
+        help="Number of sample perturbed images to save for visualization (0 = none, default: 0)"
+    )
     
     args = parser.parse_args()
     
@@ -622,7 +713,8 @@ def main():
         attack_type=attack_type,
         epsilon=args.epsilon,
         pgd_alpha=args.pgd_alpha,
-        pgd_iters=args.pgd_iters
+        pgd_iters=args.pgd_iters,
+        save_sample_images=args.save_sample_images
     )
 
 
