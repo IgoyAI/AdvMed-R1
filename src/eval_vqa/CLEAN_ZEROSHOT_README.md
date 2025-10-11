@@ -107,6 +107,26 @@ tail -f /local/scratch/ylai76/Code/R1-V/slurm_out/clean_zeroshot_concurrent_<JOB
 tail -f /local/scratch/ylai76/Code/R1-V/slurm_out/clean_zeroshot_concurrent_<JOB_ID>.err
 ```
 
+## Checking Results
+
+After the job completes, you can view a summary of all results:
+
+```bash
+cd src/eval_vqa
+
+# Check results in default directory
+./check_clean_zeroshot_results.sh
+
+# Or check results in custom directory
+./check_clean_zeroshot_results.sh /path/to/output
+```
+
+This will display a formatted table showing:
+- Accuracy for each modality
+- Number of correct answers
+- Total questions
+- Overall statistics
+
 ## Performance Tuning
 
 ### Concurrent Jobs
