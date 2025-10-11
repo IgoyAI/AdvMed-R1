@@ -9,6 +9,7 @@ BATCH_SIZE="${BATCH_SIZE:-4}"
 EPSILON="${EPSILON:-0.03}"
 PGD_ALPHA="${PGD_ALPHA:-0.01}"
 PGD_ITERS="${PGD_ITERS:-10}"
+SAVE_SAMPLES="${SAVE_SAMPLES:-3}"
 
 # Attack types to run
 ATTACKS=("clean" "fgsm" "pgd")
@@ -27,6 +28,7 @@ echo "Batch Size: $BATCH_SIZE"
 echo "Epsilon: $EPSILON"
 echo "PGD Alpha: $PGD_ALPHA"
 echo "PGD Iterations: $PGD_ITERS"
+echo "Save Sample Images: $SAVE_SAMPLES"
 echo "========================================"
 echo ""
 
@@ -63,7 +65,8 @@ submit_jobs_for_test() {
             "$EPSILON" \
             "$PGD_ALPHA" \
             "$PGD_ITERS" \
-            "$DATASET_ROOT"
+            "$DATASET_ROOT" \
+            "$SAVE_SAMPLES"
         
         echo "  Job $JOB_NAME submitted!"
     done
@@ -130,6 +133,7 @@ case $EVAL_TYPE in
         echo "  EPSILON       - Perturbation magnitude (default: 0.03)"
         echo "  PGD_ALPHA     - PGD step size (default: 0.01)"
         echo "  PGD_ITERS     - PGD iterations (default: 10)"
+        echo "  SAVE_SAMPLES  - Number of sample images to save (default: 3)"
         exit 1
         ;;
 esac

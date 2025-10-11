@@ -14,6 +14,7 @@ This document summarizes the implementation of zero-shot evaluation capabilities
    - Supports clean evaluation mode
    - Configurable attack parameters (epsilon, alpha, iterations)
    - Outputs detailed JSON results with per-sample predictions
+   - **NEW**: Saves sample perturbed images for visualization
 
 2. **`eval_qwen2_5vl_zeroshot.py`** (Simple clean evaluation)
    - Optimized for clean zero-shot evaluation (no attacks)
@@ -25,6 +26,7 @@ This document summarizes the implementation of zero-shot evaluation capabilities
    - Supports filtering by specific modalities
    - Generates comprehensive summary reports
    - Runs multiple attack types in sequence
+   - **NEW**: Supports saving sample images for all evaluations
 
 ### Helper Scripts
 
@@ -172,6 +174,23 @@ python eval_qwen2_5vl_adversarial.py \
     --pgd_iters 10
 ```
 
+### Example 3b: PGD Attack with Sample Images
+```bash
+python eval_qwen2_5vl_adversarial.py \
+    --model_path /path/to/Qwen2.5-VL-3B-Instruct \
+    --test_data ../../Splits/modality/test/CT\(Computed\ Tomography\)_test.json \
+    --dataset_root ../.. \
+    --output_path ../../results/ct_pgd.json \
+    --batch_size 4 \
+    --attack_type pgd \
+    --epsilon 0.03 \
+    --pgd_alpha 0.01 \
+    --pgd_iters 10 \
+    --save_sample_images 5
+```
+
+This will save 5 randomly selected comparison images (original vs. perturbed) in a `sample_images/` subdirectory alongside the results.
+
 ### Example 4: Batch Evaluation
 ```bash
 python batch_eval_adversarial.py \
@@ -211,6 +230,14 @@ export MODEL_PATH=/path/to/Qwen2.5-VL-3B-Instruct
 - `pgd_alpha`: Step size for PGD (default: 0.01)
 - `pgd_iters`: Number of PGD iterations (default: 10)
 - `batch_size`: Inference batch size (default: 8 for clean, 4 for attacks)
+- `save_sample_images`: Number of sample perturbed images to save (default: 0)
+
+### Sample Image Visualization
+When `--save_sample_images` is specified, the script saves side-by-side comparisons of original and perturbed images:
+- Useful for visualizing attack effectiveness
+- Helps verify that perturbations are working correctly
+- Can be used for papers and presentations
+- Images saved in `sample_images/` subdirectory
 
 ## Technical Requirements
 

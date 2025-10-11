@@ -42,7 +42,7 @@ def get_test_files(splits_dir: str, evaluation_type: str = "modality") -> List[D
 def run_single_evaluation(model_path: str, test_data_path: str, dataset_root: str,
                          output_path: str, batch_size: int, attack_type: str,
                          epsilon: float, pgd_alpha: float, pgd_iters: int,
-                         attn_implementation: str = "auto") -> float:
+                         attn_implementation: str = "auto", save_sample_images: int = 0) -> float:
     """
     Run a single evaluation
     
@@ -57,6 +57,7 @@ def run_single_evaluation(model_path: str, test_data_path: str, dataset_root: st
         pgd_alpha: Alpha for PGD
         pgd_iters: Iterations for PGD
         attn_implementation: Attention implementation to use
+        save_sample_images: Number of sample images to save
         
     Returns:
         Accuracy
@@ -74,7 +75,8 @@ def run_single_evaluation(model_path: str, test_data_path: str, dataset_root: st
         "--epsilon", str(epsilon),
         "--pgd_alpha", str(pgd_alpha),
         "--pgd_iters", str(pgd_iters),
-        "--attn_implementation", attn_implementation
+        "--attn_implementation", attn_implementation,
+        "--save_sample_images", str(save_sample_images)
     ]
     
     # Run evaluation
@@ -186,6 +188,12 @@ def main():
         default=None,
         help="Specific modalities to evaluate (if not specified, evaluate all)"
     )
+    parser.add_argument(
+        "--save_sample_images",
+        type=int,
+        default=0,
+        help="Number of sample perturbed images to save for each evaluation (0 = none, default: 0)"
+    )
     
     args = parser.parse_args()
     
@@ -240,7 +248,8 @@ def main():
                 epsilon=args.epsilon,
                 pgd_alpha=args.pgd_alpha,
                 pgd_iters=args.pgd_iters,
-                attn_implementation=args.attn_implementation
+                attn_implementation=args.attn_implementation,
+                save_sample_images=args.save_sample_images
             )
             
             test_results['attacks'][attack_type] = {
