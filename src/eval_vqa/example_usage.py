@@ -75,6 +75,34 @@ python eval_qwen2_5vl_adversarial.py \
     print(cmd)
 
 
+def example_with_sample_images():
+    """Example: Save sample perturbed images"""
+    print_section("Example 3b: PGD with Sample Image Visualization")
+    
+    cmd = r"""
+python eval_qwen2_5vl_adversarial.py \
+    --model_path /path/to/Qwen2.5-VL-3B-Instruct \
+    --test_data ../../Splits/modality/test/X-Ray_test.json \
+    --dataset_root ../.. \
+    --output_path ../../results/xray_pgd.json \
+    --batch_size 4 \
+    --attack_type pgd \
+    --epsilon 0.03 \
+    --pgd_alpha 0.01 \
+    --pgd_iters 10 \
+    --save_sample_images 5
+"""
+    print("NEW FEATURE: Save sample perturbed images for visualization!")
+    print("This will save 5 randomly selected comparison images showing:")
+    print("  • Original image (left side)")
+    print("  • Perturbed image (right side)")
+    print("  • Attack parameters in title")
+    print("\nImages are saved in results/sample_images/ directory.")
+    print("Useful for papers, presentations, and understanding model vulnerabilities.")
+    print("\nCommand:")
+    print(cmd)
+
+
 def example_batch_evaluation():
     """Example: Batch evaluation across all modalities"""
     print_section("Example 4: Batch Evaluation (All Modalities)")
@@ -236,8 +264,8 @@ def main():
     parser.add_argument(
         "--example",
         type=int,
-        choices=range(1, 9),
-        help="Show specific example (1-8), or show all if not specified"
+        choices=range(1, 10),
+        help="Show specific example (1-9), or show all if not specified"
     )
     
     args = parser.parse_args()
@@ -246,6 +274,7 @@ def main():
         example_clean_evaluation,
         example_fgsm_evaluation,
         example_pgd_evaluation,
+        example_with_sample_images,
         example_batch_evaluation,
         example_specific_modalities,
         example_shell_script,
