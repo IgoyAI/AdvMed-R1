@@ -44,11 +44,12 @@ EPSILON="${6:-0.03}"
 PGD_ALPHA="${7:-0.01}"
 PGD_ITERS="${8:-10}"
 DATASET_ROOT="${9:-../..}"
+SAVE_SAMPLES="${10:-3}"
 
 # Ensure required parameters are not empty
 if [ -z "$MODEL_PATH" ] || [ -z "$TEST_DATA" ] || [ -z "$ATTACK_TYPE" ] || [ -z "$OUTPUT_DIR" ]; then
     echo "Error: Missing required parameters!"
-    echo "Usage: sbatch run_adversarial_eval_slurm.sh MODEL_PATH TEST_DATA ATTACK_TYPE OUTPUT_DIR [BATCH_SIZE] [EPSILON] [PGD_ALPHA] [PGD_ITERS] [DATASET_ROOT]"
+    echo "Usage: sbatch run_adversarial_eval_slurm.sh MODEL_PATH TEST_DATA ATTACK_TYPE OUTPUT_DIR [BATCH_SIZE] [EPSILON] [PGD_ALPHA] [PGD_ITERS] [DATASET_ROOT] [SAVE_SAMPLES]"
     exit 1
 fi
 
@@ -72,6 +73,7 @@ echo "EPSILON: $EPSILON"
 echo "PGD_ALPHA: $PGD_ALPHA"
 echo "PGD_ITERS: $PGD_ITERS"
 echo "DATASET_ROOT: $DATASET_ROOT"
+echo "SAVE_SAMPLES: $SAVE_SAMPLES"
 echo "========================================"
 
 # Run Python script
@@ -84,7 +86,8 @@ python eval_qwen2_5vl_adversarial.py \
     --attack_type "$ATTACK_TYPE" \
     --epsilon "$EPSILON" \
     --pgd_alpha "$PGD_ALPHA" \
-    --pgd_iters "$PGD_ITERS"
+    --pgd_iters "$PGD_ITERS" \
+    --save_sample_images "$SAVE_SAMPLES"
 
 if [ $? -eq 0 ]; then
     echo "✓ Adversarial evaluation completed successfully"

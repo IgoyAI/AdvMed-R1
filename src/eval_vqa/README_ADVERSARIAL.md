@@ -124,6 +124,28 @@ python eval_qwen2_5vl_adversarial.py \
     --pgd_iters 10
 ```
 
+### Saving Sample Perturbed Images
+
+To save visual examples of perturbed images alongside the evaluation results, use the `--save_sample_images` argument:
+
+```bash
+python eval_qwen2_5vl_adversarial.py \
+    --model_path /path/to/Qwen2.5-VL-3B-Instruct \
+    --test_data Splits/modality/test/CT\(Computed\ Tomography\)_test.json \
+    --dataset_root . \
+    --output_path results/ct_fgsm.json \
+    --batch_size 4 \
+    --attack_type fgsm \
+    --epsilon 0.03 \
+    --save_sample_images 5
+```
+
+This will save 5 randomly selected comparison images (original vs. perturbed) in a `sample_images/` subdirectory alongside the results. Sample images are useful for:
+- Visualizing the effect of adversarial perturbations
+- Verifying that attacks are working correctly
+- Creating figures for papers and presentations
+- Understanding model vulnerabilities
+
 ### Batch Evaluation (All Modalities)
 
 Run evaluation across all modalities and attack types:
@@ -171,6 +193,7 @@ python batch_eval_adversarial.py \
 | `--epsilon` | float | `0.03` | Perturbation magnitude (L∞ norm bound) |
 | `--pgd_alpha` | float | `0.01` | Step size for PGD attack |
 | `--pgd_iters` | int | `10` | Number of iterations for PGD |
+| `--save_sample_images` | int | `0` | Number of sample perturbed images to save (0 = none) |
 
 ### batch_eval_adversarial.py
 
@@ -187,6 +210,7 @@ python batch_eval_adversarial.py \
 | `--pgd_alpha` | float | `0.01` | Step size for PGD |
 | `--pgd_iters` | int | `10` | Iterations for PGD |
 | `--modalities` | list | `None` | Specific modalities to evaluate |
+| `--save_sample_images` | int | `0` | Number of sample perturbed images to save per evaluation (0 = none) |
 
 ## Output Format
 
@@ -212,6 +236,21 @@ Results are saved in JSON format with the following structure:
   ]
 }
 ```
+
+### Sample Images
+
+When `--save_sample_images` is used, perturbed images are saved in a `sample_images/` subdirectory:
+
+```
+results/
+├── ct_fgsm.json
+└── sample_images/
+    ├── sample_0_fgsm_eps0.03.png
+    ├── sample_15_fgsm_eps0.03.png
+    └── sample_42_fgsm_eps0.03.png
+```
+
+Each image shows a side-by-side comparison of the original and perturbed images.
 
 ## Adversarial Attack Details
 

@@ -32,6 +32,7 @@ BATCH_SIZE=${BATCH_SIZE:-8}
 EPSILON=${EPSILON:-0.03}
 PGD_ALPHA=${PGD_ALPHA:-0.01}
 PGD_ITERS=${PGD_ITERS:-10}
+SAVE_SAMPLES=${SAVE_SAMPLES:-3}
 
 # Print configuration
 echo "========================================"
@@ -45,6 +46,7 @@ echo "Batch Size: $BATCH_SIZE"
 echo "Epsilon: $EPSILON"
 echo "PGD Alpha: $PGD_ALPHA"
 echo "PGD Iterations: $PGD_ITERS"
+echo "Save Sample Images: $SAVE_SAMPLES"
 echo "========================================"
 echo ""
 
@@ -75,7 +77,8 @@ run_evaluation() {
         --attack_type "$attack_type" \
         --epsilon "$EPSILON" \
         --pgd_alpha "$PGD_ALPHA" \
-        --pgd_iters "$PGD_ITERS"
+        --pgd_iters "$PGD_ITERS" \
+        --save_sample_images "$SAVE_SAMPLES"
     
     if [ $? -eq 0 ]; then
         echo "✓ $attack_type evaluation completed successfully"
@@ -101,7 +104,8 @@ case $EVAL_TYPE in
             --epsilon "$EPSILON" \
             --pgd_alpha "$PGD_ALPHA" \
             --pgd_iters "$PGD_ITERS" \
-            --evaluation_type modality
+            --evaluation_type modality \
+            --save_sample_images "$SAVE_SAMPLES"
         ;;
     
     ct)
@@ -164,6 +168,7 @@ case $EVAL_TYPE in
         echo "  EPSILON       - Perturbation magnitude (default: 0.03)"
         echo "  PGD_ALPHA     - PGD step size (default: 0.01)"
         echo "  PGD_ITERS     - PGD iterations (default: 10)"
+        echo "  SAVE_SAMPLES  - Number of sample images to save (default: 3)"
         exit 1
         ;;
 esac
