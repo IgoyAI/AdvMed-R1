@@ -93,6 +93,31 @@ export OUTPUT_DIR="/path/to/output"
 
 This submits separate SLURM jobs for each attack type (clean, fgsm, pgd), allowing parallel execution across the cluster.
 
+### Option 1.6: Using SLURM for Concurrent Clean Zero-Shot Evaluation (Recommended for Efficiency)
+
+For efficient clean zero-shot evaluation of all modalities on a single GPU with concurrent execution:
+
+```bash
+cd src/eval_vqa
+
+# Configure environment variables (optional)
+export MODEL_PATH="/path/to/model"
+export SPLITS_DIR="/path/to/Splits"
+export OUTPUT_DIR="/path/to/output"
+export CONCURRENT_JOBS=4  # Number of modalities to evaluate concurrently
+
+# Submit single job that evaluates all modalities concurrently
+./submit_clean_zeroshot.sh
+```
+
+This submits a single SLURM job that evaluates all 8 modalities concurrently on 1 GPU, making efficient use of GPU resources. See `CLEAN_ZEROSHOT_README.md` for detailed documentation.
+
+**Benefits:**
+- Uses only 1 GPU instead of multiple jobs
+- Evaluates multiple modalities in parallel
+- Faster overall completion time
+- More efficient resource utilization
+
 ### Option 2: Using Python Scripts Directly
 
 #### Clean Zero-Shot Evaluation (No Attack)
